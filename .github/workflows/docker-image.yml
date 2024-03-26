@@ -15,7 +15,7 @@ on:
         required: false
         default: false
 env:
-  ORG: timescale #timescaledev
+  ORG: laurianti #timescaledev
   TS_VERSION: ${{ github.event.inputs.version || '2.13.0' }}
 jobs:
 
