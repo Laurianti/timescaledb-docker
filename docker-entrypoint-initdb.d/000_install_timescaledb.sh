@@ -5,11 +5,7 @@ create_sql=`mktemp`
 # Checks to support bitnami image with same scripts so they stay in sync
 if [ ! -z "${BITNAMI_APP_NAME:-}" ]; then
 	if [ -z "${POSTGRES_USER:-}" ]; then
-		POSTGRES_USER=postgres
-	fi
-
-	if [ -z "${POSTGRESQL_PASSWORD:-}" ]; then
-		POSTGRESQL_PASSWORD=${POSTGRESQL_POSTGRES_PASSWORD}
+		POSTGRES_USER=${POSTGRESQL_USERNAME}
 	fi
 
 	if [ -z "${POSTGRES_DB:-}" ]; then
@@ -19,6 +15,11 @@ if [ ! -z "${BITNAMI_APP_NAME:-}" ]; then
 	if [ -z "${PGDATA:-}" ]; then
 		PGDATA=${POSTGRESQL_DATA_DIR}
 	fi
+fi
+
+if [ "${BITNAMI_APP_NAME:-}" == "postgresql-repmgr" ]; then
+	POSTGRES_USER="postgres"
+	POSTGRESQL_PASSWORD=${POSTGRESQL_POSTGRES_PASSWORD}
 fi
 
 if [ -z "${POSTGRESQL_CONF_DIR:-}" ]; then
@@ -42,9 +43,6 @@ fi
 
 echo "timescaledb.telemetry_level=${TS_TELEMETRY}" >> ${POSTGRESQL_CONF_DIR}/postgresql.conf
 
-if [ -z "${POSTGRESQL_PASSWORD:-}" ]; then
-	POSTGRESQL_PASSWORD=${POSTGRES_PASSWORD:-}
-fi
 export PGPASSWORD="$POSTGRESQL_PASSWORD"
 
 # create extension timescaledb in initial databases
